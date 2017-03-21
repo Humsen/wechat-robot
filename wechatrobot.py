@@ -6,7 +6,7 @@ import json
 #图灵机器人
 def talks_robot(info = 'Husen'):
     api_url = 'http://www.tuling123.com/openapi/api'
-    apikey = '0d26f7c76ecf4623a536368eaf3d26ea'
+    apikey = '4cb9814aa00b41d38a1c0abc5a00c929'
     data = {'key': apikey,
                 'info': info}
     req = requests.post(api_url, data=data).text
@@ -16,7 +16,6 @@ def talks_robot(info = 'Husen'):
 #微信自动回复
 #robot = Robot()
 robot=Bot()
-robot.cache_path=True
 
 # 回复来自其他好友、群聊和公众号的消息
 @robot.register([Friend])
@@ -63,6 +62,7 @@ def ignore(msg):
 """
 
 # 开始监听和自动处理消息
-robot.start()
+#robot.start()
+embed()
 
 os.system("pause")

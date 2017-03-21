@@ -15,8 +15,9 @@ def talks_robot(info = 'Husen'):
 
 #微信自动回复
 #robot = Robot()
-robot=Bot()
+robot=Bot(False,1)
 #robot.cache_path=True
+#robot.console_qr=2
 
 #boring_group = robot.groups().search('wxpy 交流群 ')[0]
 #mps = robot.mps(update=True)
@@ -76,8 +77,7 @@ def ignore(msg):
     replys = talks_robot(info=message) + '\n\t\t\t\t\t--微信机器人自动回复'
     return replys
 
-
 # 开始监听和自动处理消息
-robot.start()
-
+#robot.start()
+embed()
 os.system("pause")

@@ -9,6 +9,16 @@ import json
 #图灵机器人
 tuling = Tuling(api_key='0d26f7c76ecf4623a536368eaf3d26ea')
 
+#图灵机器人
+def talks_robot(info = 'Husen'):
+    api_url = 'http://www.tuling123.com/openapi/api'
+    apikey = '0d26f7c76ecf4623a536368eaf3d26ea'
+    data = {'key': apikey,
+                'info': info}
+    req = requests.post(api_url, data=data).text
+    replys = json.loads(req)['text']
+    return replys
+
 #微信自动回复
 #robot = Robot()
 robot=Bot(True,1)
@@ -60,20 +70,6 @@ def ignore(msg):
 def ignore(msg):
     tuling.do_reply(msg)
 
-groups = robot.groups(True)
-#整点报时
-while 1:
-    hour = time.strftime('%H', time.localtime(time.time()))
-    minutes = time.strftime('%M', time.localtime(time.time()))
-    second = time.strftime('%S', time.localtime(time.time()))
-
-    if ('00' == minutes and '00' == second):
-        nowTime = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-        for group in groups:
-            group.send('为您整点报时：\n{}'.format(nowTime))
-        time.sleep(2)
-
-# 自动接受添加好友请求
 @robot.register(msg_types=FRIENDS)
 def auto_accept_friends(msg):
     if 'wxpy' in msg.text.lower():
@@ -81,6 +77,28 @@ def auto_accept_friends(msg):
         # 或 new_friend = msg.card.accept()
         # 向新的好友发送消息
         new_friend.send('哈哈，我自动接受了你的好友请求')
+
+groups = robot.groups(True)
+#整点报时
+while 1:
+    hour = time.strftime('%H', time.localtime(time.time()))
+    minutes = time.strftime('%M', time.localtime(time.time()))
+    seconds = time.strftime('%S', time.localtime(time.time()))
+
+    if (hour == '07' and minutes == '30' and seconds == '00'):
+        nowTime = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        group_1.send('早上好！为您整点报时：\n{}\n--今日天气--\n{}'.format(nowTime,talks_robot(info='重庆沙坪坝区天气')))
+        group_3.send('早上好！为您整点报时：\n{}\n--今日天气--\n{}'.format(nowTime,talks_robot(info='南京江宁区天气')))
+    elif(hour == '13' and minutes == '30' and seconds == '00'):
+        nowTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        for group in groups:
+            group.send('下午好！该干活了，为您整点报时：\n{}\n--轻松一下--\n{}'.format(nowTime,talks_robot(info='讲个笑话')))
+    elif (hour == '00' and minutes == '00' and seconds == '00'):
+            nowTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            for group in groups:
+                group.send('晚上好！该吃宵夜了，为您整点报时：\n{}\n--晚安全世界--'.format(nowTime))
+
+    time.sleep(1)
 
 # 开始监听和自动处理消息
 #robot.start()

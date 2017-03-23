@@ -22,8 +22,10 @@ def talks_robot(info = 'Husen'):
     replys = json.loads(req)['text']
     return replys
 
+admin_remark_name = "Husen"
+admin_signature = '潜心修行，不卑不亢。'
 # 定义远程管理员 (用于远程管理)，使用备注名更安全
-remote_admin = ensure_one(robot.friends().search(remark_name='Husen'))
+remote_admin = ensure_one(robot.friends().search(remark_name=admin_remark_name,signature=admin_signature))
 
 #mps = robot.mps(update=True)
 group_1 = robot.groups().search('来呀。来呀。')[0]
@@ -34,6 +36,7 @@ group_3 = robot.groups().search('421永不断片')[0]
 def remote_down():
     robot.registered.disable()
     robot.registered.enable(remote_up)
+    robot.registered.enable(remote_admin_up)
 
 #开启所有注册函数
 def remote_reup():
@@ -50,6 +53,15 @@ def remote_up(msg):
          return '已启动'
     else:
          return
+
+#远程管理员启动
+@robot.register(remote_admin)
+def remote_admin_up(msg):
+    if ('启动' in msg.text):
+        thread = threading.Thread(target=remote_reup)
+        thread.start()
+        thread.join()
+        return '已启动'
 
 # 回复来自其他好友、群聊和公众号的消息
 @robot.register([Friend])
@@ -101,7 +113,7 @@ def ignore(msg):
 """
 
 #接收一些群
-@robot.register([group_1,group_3,remote_admin])
+@robot.register([group_1,group_3])
 def ignore(msg):
     #if ('休眠' in msg.text):
     if (msg.is_at and msg.member == remote_admin and '休眠' in msg.text):
@@ -112,6 +124,21 @@ def ignore(msg):
     else:
         tuling.do_reply(msg)
 
+#接收管理员命令
+@robot.register(remote_admin)
+def remote_admin_command(msg):
+    if('休眠' in msg.text):
+        thread = threading.Thread(target=remote_down)
+        thread.start()
+        thread.join()
+        return '已休眠'
+    elif("登出" in msg.text):
+        print('已成功退出')
+        robot.logout()
+    else:
+        tuling.do_reply(msg)
+
+#自动接受好友请求
 @robot.register(msg_types=FRIENDS)
 def auto_accept_friends(msg):
     new_friend = robot.accept_friend(msg.card)
